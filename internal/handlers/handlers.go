@@ -20,6 +20,7 @@ func Setup(g *gin.Engine, db *sql.DB, redis *redis.Client) *gin.Engine {
  
 	setupTopics(g.Group("/topics"), deps)
 	setupComments(g.Group("/comments"), deps)
+	setupUsers(g.Group("/users"), deps)
 
 
 	return g

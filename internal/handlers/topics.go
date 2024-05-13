@@ -7,6 +7,7 @@ import (
 )
 
 func setupTopics(g *gin.RouterGroup, deps *dependencies) {
+	
 	g.GET("/", func(gtx *gin.Context) {
 		gtx.String(http.StatusOK, "get all topics")
 	})
