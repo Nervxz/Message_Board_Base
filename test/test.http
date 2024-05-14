@@ -1,8 +1,4 @@
-    
-POST       http://localhost:8080/users/
+GET       http://localhost:8080/users/
 
 
-{
-    "name": "Loan",
-    "password": "asdasdasds"
-}
+

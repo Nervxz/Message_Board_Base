@@ -15,14 +15,14 @@ func setupTopics(g *gin.RouterGroup, deps *dependencies) {
 type TopicHandler struct {
     deps *dependencies
 }
-
+// bind is a method that binds the handlers to the router group
 func (h *TopicHandler) bind(g *gin.RouterGroup) {
     g.GET("/", h.getAllTopics)
     g.GET("/:id", h.getTopicByID)
     g.POST("/", h.createTopic)
     g.PUT("/:id", h.updateTopic)
 }
-
+// getAllTopics is a handler that returns all topics
 func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
     rows, err := h.deps.db.Query("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics")
     if err != nil {
@@ -50,7 +50,7 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 
     gtx.JSON(http.StatusOK, topics)
 }
-
+// getTopicByID is a handler that returns a single topic
 func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
     id := gtx.Param("id")
     row := h.deps.db.QueryRow("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics WHERE TopicID = $1", id)
@@ -66,7 +66,7 @@ func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
     }
     gtx.JSON(http.StatusOK, gin.H{"TopicID": topicID, "Title": title, "Body": body, "DatePublished": datePublished, "UserID": userID})
 }
-
+// createTopic is a handler that creates a new topic
 func (h *TopicHandler) createTopic(gtx *gin.Context) {
     var topic struct {
         Title   string `json:"Title"`

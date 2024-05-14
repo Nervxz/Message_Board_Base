@@ -25,7 +25,7 @@ func (h *UserHandler) bind(g *gin.RouterGroup) {
 }
 
 func (h *UserHandler) getAllUsers(gtx *gin.Context) {
-    rows, err := h.deps.db.Query("SELECT UserID, Username, Registered_time FROM Users")
+    rows, err := h.deps.db.Query("SELECT UserID, Username, RegisteredTime FROM Users")
     if err != nil {
         gtx.String(http.StatusInternalServerError, "Failed to query users: %v", err)
         return
@@ -45,7 +45,7 @@ func (h *UserHandler) getAllUsers(gtx *gin.Context) {
         }
         user["UserID"] = userID
         user["Username"] = username
-        user["Registered_time"] = registeredTime
+        user["RegisteredTime"] = registeredTime
       
         users = append(users, user)
     }
@@ -55,7 +55,7 @@ func (h *UserHandler) getAllUsers(gtx *gin.Context) {
 
 func (h *UserHandler) getUserByID(gtx *gin.Context) {
     id := gtx.Param("id")
-    row := h.deps.db.QueryRow("SELECT UserID, Username, Registered_time FROM Users WHERE UserID = $1", id)
+    row := h.deps.db.QueryRow("SELECT UserID, Username, RegisteredTime FROM Users WHERE UserID = $1", id)
     var userID int
     var username, registeredTime string
     if err := row.Scan(&userID, &username, &registeredTime); err != nil {
@@ -66,7 +66,7 @@ func (h *UserHandler) getUserByID(gtx *gin.Context) {
         gtx.String(http.StatusInternalServerError, "Failed to query user: %v", err)
         return
     }
-    gtx.JSON(http.StatusOK, gin.H{"UserID": userID, "Username": username, "Registered_time": registeredTime})
+    gtx.JSON(http.StatusOK, gin.H{"UserID": userID, "Username": username, "RegisteredTime": registeredTime})
 }
 
 func (h *UserHandler) createUser(gtx *gin.Context) {
