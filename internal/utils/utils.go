@@ -1,6 +1,10 @@
 package utils
 
-import "os"
+import (
+	"crypto/rand"
+	"encoding/hex"
+	"os"
+)
 
 func LoadEnvOrDefault(envName string, defaultVal string) string {
 	val, found := os.LookupEnv(envName)
@@ -8,4 +12,11 @@ func LoadEnvOrDefault(envName string, defaultVal string) string {
 		return defaultVal
 	}
 	return val
+
+}
+
+func GenerateToken() string {
+	bytes := make([]byte, 16)
+	rand.Read(bytes)
+	return hex.EncodeToString(bytes)
 }
