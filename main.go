@@ -14,6 +14,7 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/nervxz/msg-board/internal/config"
+	internal "github.com/nervxz/msg-board/internal/database"
 	"github.com/nervxz/msg-board/internal/handlers"
 	"github.com/nervxz/msg-board/internal/utils"
 	"github.com/redis/go-redis/v9"
@@ -33,6 +34,8 @@ func main() {
 		os.Exit(1)
 		return
 	}
+	
+	
 }
 
 type server struct {
@@ -82,9 +85,10 @@ func (s *server) waitShutdown() error {
 	}
 
 	if err := s.db.Close(); err != nil {
-		log.Printf("fail to close DB connections: %v", err)
-		return err
-	}
+        log.Printf("fail to close DB connections: %v", err)
+        return err
+    }
+
 
 	if err := s.redis.Close(); err != nil {
 		log.Printf("fail to close Redis connections: %v", err)
@@ -96,32 +100,43 @@ func (s *server) waitShutdown() error {
 }
 
 func newServer() (*server, error) {
-	cfg, err := config.Resolve()
-	if err != nil {
-		return nil, err
-	}
+    cfg, err := config.Resolve()
+    if err != nil {
+        log.Fatalf("Failed to resolve configuration: %v", err)
+    }
 
-	dbClient, err := connectDB(cfg.DB)
-	if err != nil {
-		return nil, err
-	}
+    db, err := connectDB(cfg.DB)
+    if err != nil {
+        log.Fatalf("Failed to connect to the database: %v", err)
+    }
+    
+	
 
-	redisClient, err := connectRedis(cfg.Redis)
+    err = internal.MigrateDB(db)
+    if err != nil {
+        log.Fatalf("Failed to migrate the database: %v", err)
+    }
 
-	route := gin.Default()
-	route.Use(gin.Logger())
-	route.Use(gin.Recovery())
+    redisClient, err := connectRedis(cfg.Redis)
+    if err != nil {
+        return nil, err
+    }
 
-	route = handlers.Setup(route, dbClient, redisClient)
+    route := gin.Default()
+    route.Use(gin.Logger())
+    route.Use(gin.Recovery())
 
-	return &server{
-		done:       make(chan struct{}),
-		httpServer: newHTTP(route),
-		cfg:        cfg,
-		db:         dbClient,
-		redis:      redisClient,
-	}, nil
+    route = handlers.Setup(route, db, redisClient)
+
+    return &server{
+        done:       make(chan struct{}),
+        httpServer: newHTTP(route),
+        cfg:        cfg,
+        db:         db,
+        redis:      redisClient,
+    }, nil
 }
+
 
 func newHTTP(route *gin.Engine) *http.Server {
 	return &http.Server{
@@ -162,10 +177,3 @@ func connectRedis(cfg config.RedisConfig) (*redis.Client, error) {
 	return cli, nil
 }
 
-func initRoutes(r *gin.Engine) gin.IRoutes {
-	return r.GET("/ping", func(c *gin.Context) {
-		c.JSON(http.StatusOK, gin.H{
-			"message": "pong",
-		})
-	})
-}

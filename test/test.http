@@ -1,4 +1,8 @@
-PUT   http://localhost:8080/topics/id
+    
+POST       http://localhost:8080/users/
 
 
-
+{
+    "name": "Loan",
+    "password": "asdasdasds"
+}
