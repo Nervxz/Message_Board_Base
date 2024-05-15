@@ -1,38 +1,28 @@
-import React, { createContext, useState, useContext, useEffect } from "react";
-import PropTypes from "prop-types";
+import React, { createContext, useContext, useState } from "react";
 
 const AuthContext = createContext();
 
+// eslint-disable-next-line react/prop-types
 export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-
-  useEffect(() => {
-    // Check if token exists in localStorage on initial load
-    const token = localStorage.getItem("token");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
+  const [token, setToken] = useState(null);
 
   const signIn = (token) => {
-    localStorage.setItem("token", token);
     setIsAuthenticated(true);
+    setToken(token);
   };
 
   const signOut = () => {
-    localStorage.removeItem("token");
     setIsAuthenticated(false);
+    setToken(null);
   };
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, signIn, signOut }}>
+    <AuthContext.Provider value={{ isAuthenticated, token, signIn, signOut }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
-AuthProvider.propTypes = {
-  children: PropTypes.node.isRequired,
-};
-
+// eslint-disable-next-line react-refresh/only-export-components
 export const useAuth = () => useContext(AuthContext);
