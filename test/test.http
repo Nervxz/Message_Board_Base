@@ -1,4 +1,9 @@
-GET       http://localhost:8080/users/
+POST        http://localhost:8080/auth/signup
 
 
+
+{
+    "username": "admin",
+    "password": "admin"
+}
 

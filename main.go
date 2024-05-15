@@ -11,6 +11,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/nervxz/msg-board/internal/config"
@@ -125,6 +126,17 @@ func newServer() (*server, error) {
     route := gin.Default()
     route.Use(gin.Logger())
     route.Use(gin.Recovery())
+
+	route.Use(cors.New(cors.Config{
+        AllowOrigins:     []string{"http://localhost:5173"},
+        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+        AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+        ExposeHeaders:    []string{"Content-Length"},
+        AllowCredentials: true,
+        MaxAge:           12 * time.Hour,
+    }))
+
+
 
     route = handlers.Setup(route, db, redisClient)
 
