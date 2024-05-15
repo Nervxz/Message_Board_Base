@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import axios from "../axiosConfig"; // Import the configured Axios instance
+import axios from "../axiosConfig";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import "../index.css";
 
 const SignIn = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const { signIn } = useAuth();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -12,8 +17,8 @@ const SignIn = () => {
       const response = await axios.post("/auth/signin", { username, password });
       setMessage("Sign in successful");
       console.log("Sign in successful", response.data);
-      // Save the token in local storage or state management
-      localStorage.setItem("token", response.data.token);
+      signIn(response.data.token);
+      navigate("/"); // Redirect to home page
     } catch (error) {
       setMessage("Error signing in");
       console.error("Error signing in", error);
@@ -23,8 +28,10 @@ const SignIn = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
+        <h2 className="text-2xl font-bold mb-4">Sign In</h2>
         <label>Username:</label>
         <input
+          className="border border-sky-500"
           type="text"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
@@ -32,7 +39,9 @@ const SignIn = () => {
       </div>
       <div>
         <label>Password:</label>
+
         <input
+          className="border border-sky-500"
           type="password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}

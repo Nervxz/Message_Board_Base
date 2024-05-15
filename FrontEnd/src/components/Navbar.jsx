@@ -1,7 +1,10 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Navbar = () => {
+  const { isAuthenticated, signOut } = useAuth();
+
   return (
     <nav className="bg-gray-800 p-4 fixed top-0 w-full z-10">
       <div className="container mx-auto flex justify-between items-center">
@@ -9,14 +12,20 @@ const Navbar = () => {
           <Link to="/">Home</Link>
         </div>
         <div className="text-white flex space-x-4 ml-auto">
-          {" "}
-          {/* Added ml-auto to move links to the right */}
-          <Link to="/signin" className="px-4">
-            Sign In
-          </Link>
-          <Link to="/signup" className="px-4">
-            Sign Up
-          </Link>
+          {isAuthenticated ? (
+            <button onClick={signOut} className="px-4">
+              Sign Out
+            </button>
+          ) : (
+            <>
+              <Link to="/signin" className="px-4">
+                Sign In
+              </Link>
+              <Link to="/signup" className="px-4">
+                Sign Up
+              </Link>
+            </>
+          )}
         </div>
       </div>
     </nav>

@@ -1,20 +1,20 @@
 import React, { useState } from "react";
-import axios from "axios";
+import axios from "../axiosConfig";
+import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
-  const [Username, setUsername] = useState("");
-  const [Password, setPassword] = useState("");
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("http://localhost:8080/auth/signup", {
-        Username,
-        Password,
-      });
+      const response = await axios.post("/auth/signup", { username, password });
       setMessage("Sign up successful");
       console.log("Sign up successful", response.data);
+      navigate("/signin"); // Redirect to SignIn page
     } catch (error) {
       setMessage("Error signing up");
       console.error("Error signing up", error);
@@ -24,18 +24,21 @@ const SignUp = () => {
   return (
     <form onSubmit={handleSubmit}>
       <div>
+        <h2 className="text-2xl font-bold mb-4">Sign Up</h2>
         <label>Username:</label>
         <input
+          className="border border-sky-500"
           type="text"
-          value={Username}
+          value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
       </div>
       <div>
         <label>Password:</label>
         <input
+          className="border border-sky-500"
           type="password"
-          value={Password}
+          value={password}
           onChange={(e) => setPassword(e.target.value)}
         />
       </div>
