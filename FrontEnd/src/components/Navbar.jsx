@@ -10,6 +10,7 @@ const Navbar = () => {
         </div>
         <div className="text-white flex space-x-4 ml-auto">
           {" "}
+          {/* Added ml-auto to move links to the right */}
           <Link to="/signin" className="px-4">
             Sign In
           </Link>
