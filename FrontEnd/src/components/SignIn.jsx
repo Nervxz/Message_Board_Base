@@ -11,6 +11,7 @@ const SignIn = () => {
   const { signIn } = useAuth();
   const navigate = useNavigate();
 
+  // Handle sign in
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {

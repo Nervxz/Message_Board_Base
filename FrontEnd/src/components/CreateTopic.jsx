@@ -12,7 +12,7 @@ const CreateTopic = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:8080/topics",
+        "/topics/",
         { title, description },
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,9 +1,10 @@
-POST        http://localhost:8080/auth/signup
-
+POST       http://localhost:8080/topics/createTopic
 
 
 {
-    "username": "admin",
-    "password": "admin"
+    "topicid": 1,
+    "title": "Java",
+    "body": "Java is a programming language",
+    "datepublished": "2021-01-01T00:00:00Z",
+    "userid": 1,
 }
-
