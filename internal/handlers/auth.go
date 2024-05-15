@@ -12,8 +12,9 @@ import (
 )
 
 /* Auth Sources https://www.youtube.com/watch?v=d4Y2DkKbxM0 9:48 - 44:30
+   https://www.youtube.com/watch?v=97pIa_kYTqc
 
- */ 
+*/ 
 func setupAuth(g *gin.RouterGroup, deps *dependencies) {
     h := &AuthHandler{deps: deps}
     h.bind(g)
