@@ -21,6 +21,7 @@ func (h *CommentHandler) bind(g *gin.RouterGroup) {
 	g.GET("/:id", func(gtx *gin.Context) { 
 		id := gtx.Param("id")
 		h.getOne(gtx, id) // TODO: parse ID into correct type
+    g.POST("/", h.createComment)
 	})
 }
  // getAll is a handler that returns all comments
@@ -66,4 +67,26 @@ func (h *CommentHandler) getOne(gtx *gin.Context, id string) {
         return
     }
     gtx.JSON(http.StatusOK, gin.H{"CommentID": commentID, "Comment": commentText, "TopicID": topicID, "UserID": userID, "CommentsTime": commentsTime})
+}
+
+// createComment is a handler that creates a new comment
+func (h *CommentHandler) createComment(gtx *gin.Context) {
+    var comment struct {
+        Comment string `json:"Comment"`
+        TopicID int    `json:"TopicID"`
+        UserID  int    `json:"UserID"`
+    }
+    if err := gtx.BindJSON(&comment); err != nil {
+        gtx.String(http.StatusBadRequest, "Invalid request payload")
+        return
+    }
+
+    // Insert the comment into the database
+    _, err := h.deps.db.Exec("INSERT INTO Comments (Comment, TopicID, UserID) VALUES ($1, $2, $3)", comment.Comment, comment.TopicID, comment.UserID)
+    if err != nil {
+        gtx.String(http.StatusInternalServerError, "Failed to create comment: %v", err)
+        return
+    }
+
+    gtx.String(http.StatusOK, "Comment created successfully")
 }
