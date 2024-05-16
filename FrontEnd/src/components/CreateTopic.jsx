@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useAuth } from "../context/AuthContext";
+import "../index.css";
+import { defaultAxios } from "../defaultAxios";
 
 const CreateTopic = () => {
   const [title, setTitle] = useState("");
@@ -8,10 +9,11 @@ const CreateTopic = () => {
   const { token } = useAuth();
   const [message, setMessage] = useState("");
 
+  // Handle create topic
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post(
+      const response = await defaultAxios.post(
         "/topics/",
         { title, description },
         { headers: { Authorization: `Bearer ${token}` } }
@@ -20,10 +22,9 @@ const CreateTopic = () => {
       console.log("Topic created successfully", response.data);
     } catch (error) {
       setMessage("Error creating topic");
-      console.error("Error creating topic", error);
     }
   };
-
+  // Css for Create Topic
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Create Topic</h2>

@@ -1,10 +1,21 @@
-POST       http://localhost:8080/topics/createTopic
+GET       http://localhost:8080/comments/3
 
+###
+GET       http://localhost:8080/comments/
+
+###
+GET       http://localhost:8080/users/2
+
+###
+
+GET       http://localhost:8080/topics/1
+
+###
+
+POST       http://localhost:8080/topics
 
 {
-    "topicid": 1,
-    "title": "Java",
-    "body": "Java is a programming language",
-    "datepublished": "2021-01-01T00:00:00Z",
-    "userid": 1,
+  "Title": "New Topic",
+  "Body": "This is the body of the new topic",
+  "UserID":    
 }

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../axiosConfig";
+import { defaultAxios } from "../defaultAxios";
 import { useNavigate } from "react-router-dom";
 
 const SignUp = () => {
@@ -7,11 +7,14 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
-
+  // Handle sign up
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/auth/signup", { username, password });
+      const response = await defaultAxios.post("/auth/signup", {
+        username,
+        password,
+      });
       setMessage("Sign up successful");
       console.log("Sign up successful", response.data);
       navigate("/signin"); // Redirect to SignIn page

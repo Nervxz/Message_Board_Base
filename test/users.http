@@ -1,0 +1,22 @@
+### get all users
+GET       http://localhost:8080/users/
+
+
+### get user by id
+GET       http://localhost:8080/users/2
+
+
+
+### create user
+POST      http://localhost:8080/users/
+
+{
+    "Username": "aaaaasdasd",
+    "Password": "pasaaaasdasda"
+}
+
+
+
+
+### update user
+PUT       http://localhost:8080/users/2

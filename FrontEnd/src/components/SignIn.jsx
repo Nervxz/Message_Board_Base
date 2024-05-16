@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "../axiosConfig";
+import { defaultAxios } from "../defaultAxios";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import "../index.css";
@@ -15,7 +15,10 @@ const SignIn = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post("/auth/signin", { username, password });
+      const response = await defaultAxios.post("/auth/signin", {
+        username,
+        password,
+      });
       setMessage("Sign in successful");
       console.log("Sign in successful", response.data);
       signIn(response.data.token);
