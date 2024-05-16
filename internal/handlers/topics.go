@@ -3,12 +3,14 @@ package handlers
 import (
 	"database/sql"
 	"net/http"
+	"strconv"
 
 	"github.com/gin-gonic/gin"
 )
 
 func setupTopics(g *gin.RouterGroup, deps *dependencies) {
 	h := &TopicHandler{deps: deps}
+	g.Use(AuthMiddleware(deps.redis))
 	h.bind(g)
 }
 
@@ -73,17 +75,30 @@ func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
 // createTopic is a handler that creates a new topic
 func (h *TopicHandler) createTopic(gtx *gin.Context) {
 	var topic struct {
-		Title  string `json:"Title"`
-		Body   string `json:"Body"`
-		UserID int    `json:"UserID"`
+		Title string `json:"Title"`
+		Body  string `json:"Body"`
 	}
 	if err := gtx.BindJSON(&topic); err != nil {
 		gtx.String(http.StatusBadRequest, "Invalid request payload")
 		return
 	}
 
+	// Get userID from context
+	userID, exists := gtx.Get("userID")
+	if !exists {
+		gtx.String(http.StatusUnauthorized, "User not authenticated")
+		return
+	}
+
+	// Convert userID to int
+	userIDInt, err := strconv.Atoi(userID.(string))
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to parse userID")
+		return
+	}
+
 	// Insert the topic into the database
-	_, err := h.deps.db.Exec("INSERT INTO Topics (Title, Body, UserID) VALUES ($1, $2, $3)", topic.Title, topic.Body, topic.UserID)
+	_, err = h.deps.db.Exec("INSERT INTO Topics (Title, Body, UserID) VALUES ($1, $2, $3)", topic.Title, topic.Body, userIDInt)
 	if err != nil {
 		gtx.String(http.StatusInternalServerError, "Failed to create topic: %v", err)
 		return

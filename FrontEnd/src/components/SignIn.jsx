@@ -19,6 +19,7 @@ const SignIn = () => {
         username,
         password,
       });
+      localStorage.setItem("session_token", response.data.token);
       setMessage("Sign in successful");
       console.log("Sign in successful", response.data);
       signIn(response.data.token);

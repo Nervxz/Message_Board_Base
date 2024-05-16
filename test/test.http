@@ -16,6 +16,6 @@ POST       http://localhost:8080/topics
 
 {
   "Title": "New Topic",
-  "Body": "This is the body of the new topic",
-  "UserID":    
+  "Body": "This iaaaas thasdasdasdae body of the new topic",
+  "UserID":    3
 }
