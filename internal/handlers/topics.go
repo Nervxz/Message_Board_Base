@@ -6,6 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
+	"github.com/nervxz/msg-board/internal/model"
 )
 
 func setupTopics(g *gin.RouterGroup, deps *dependencies) {
@@ -35,21 +36,15 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 	}
 	defer rows.Close()
 
-	var topics []map[string]interface{}
+	var topics []model.Topic
 	for rows.Next() {
-		var topic = make(map[string]interface{})
-		var topicID, userID int
-		var title, body, datePublished string
-		if err := rows.Scan(&topicID, &title, &body, &datePublished, &userID); err != nil {
+		var c model.Topic
+		if err := rows.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan topic: %v", err)
 			return
 		}
-		topic["TopicID"] = topicID
-		topic["Title"] = title
-		topic["Body"] = body
-		topic["DatePublished"] = datePublished
-		topic["UserID"] = userID
-		topics = append(topics, topic)
+
+		topics = append(topics, c)
 	}
 
 	gtx.JSON(http.StatusOK, topics)
@@ -59,9 +54,8 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
 	id := gtx.Param("id")
 	row := h.deps.db.QueryRow("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics WHERE TopicID = $1", id)
-	var topicID, userID int
-	var title, body, datePublished string
-	if err := row.Scan(&topicID, &title, &body, &datePublished, &userID); err != nil {
+	var c model.Topic
+	if err := row.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID); err != nil {
 		if err == sql.ErrNoRows {
 			gtx.String(http.StatusNotFound, "Topic not found")
 			return
@@ -69,7 +63,7 @@ func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
 		gtx.String(http.StatusInternalServerError, "Failed to query topic: %v", err)
 		return
 	}
-	gtx.JSON(http.StatusOK, gin.H{"TopicID": topicID, "Title": title, "Body": body, "DatePublished": datePublished, "UserID": userID})
+	gtx.JSON(http.StatusOK, c)
 }
 
 // createTopic is a handler that creates a new topic
