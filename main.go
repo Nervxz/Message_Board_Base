@@ -35,8 +35,7 @@ func main() {
 		os.Exit(1)
 		return
 	}
-	
-	
+
 }
 
 type server struct {
@@ -47,7 +46,6 @@ type server struct {
 	redis      *redis.Client
 }
 
-
 // this function will run the server and listen to the port due to htpServer.ListenAndServe()
 // then check the error whether it is nil or not due to golang error handling (ErrServerClosed)
 func (s *server) run() {
@@ -56,7 +54,6 @@ func (s *server) run() {
 	}
 	close(s.done)
 }
-
 
 func (s *server) waitShutdown() error {
 	// Wait for interrupt signal to gracefully shut down the server with
@@ -86,10 +83,9 @@ func (s *server) waitShutdown() error {
 	}
 
 	if err := s.db.Close(); err != nil {
-        log.Printf("fail to close DB connections: %v", err)
-        return err
-    }
-
+		log.Printf("fail to close DB connections: %v", err)
+		return err
+	}
 
 	if err := s.redis.Close(); err != nil {
 		log.Printf("fail to close Redis connections: %v", err)
@@ -101,54 +97,49 @@ func (s *server) waitShutdown() error {
 }
 
 func newServer() (*server, error) {
-    cfg, err := config.Resolve()
-    if err != nil {
-        log.Fatalf("Failed to resolve configuration: %v", err)
-    }
+	cfg, err := config.Resolve()
+	if err != nil {
+		log.Fatalf("Failed to resolve configuration: %v", err)
+	}
 
-    db, err := connectDB(cfg.DB)
-    if err != nil {
-        log.Fatalf("Failed to connect to the database: %v", err)
-    }
-    
-	
+	db, err := connectDB(cfg.DB)
+	if err != nil {
+		log.Fatalf("Failed to connect to the database: %v", err)
+	}
 
-    err = internal.MigrateDB(db)
-    if err != nil {
-        log.Fatalf("Failed to migrate the database: %v", err)
-    }
+	err = internal.MigrateDB(db)
+	if err != nil {
+		log.Fatalf("Failed to migrate the database: %v", err)
+	}
 
-    redisClient, err := connectRedis(cfg.Redis)
-    if err != nil {
-        return nil, err
-    }
+	redisClient, err := connectRedis(cfg.Redis)
+	if err != nil {
+		return nil, err
+	}
 
-    route := gin.Default()
-    route.Use(gin.Logger())
-    route.Use(gin.Recovery())
+	route := gin.Default()
+	route.Use(gin.Logger())
+	route.Use(gin.Recovery())
 
 	route.Use(cors.New(cors.Config{
-        AllowOrigins:     []string{"http://localhost:5173"},
-        AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
-        AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
-        ExposeHeaders:    []string{"Content-Length"},
-        AllowCredentials: true,
-        MaxAge:           12 * time.Hour,
-    }))
+		AllowOrigins:     []string{"http://localhost:5173"},
+		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE"},
+		AllowHeaders:     []string{"Origin", "Content-Type", "Accept", "Authorization"},
+		ExposeHeaders:    []string{"Content-Length"},
+		AllowCredentials: true,
+		MaxAge:           12 * time.Hour,
+	}))
 
+	route = handlers.Setup(route, db, redisClient)
 
-
-    route = handlers.Setup(route, db, redisClient)
-
-    return &server{
-        done:       make(chan struct{}),
-        httpServer: newHTTP(route),
-        cfg:        cfg,
-        db:         db,
-        redis:      redisClient,
-    }, nil
+	return &server{
+		done:       make(chan struct{}),
+		httpServer: newHTTP(route),
+		cfg:        cfg,
+		db:         db,
+		redis:      redisClient,
+	}, nil
 }
-
 
 func newHTTP(route *gin.Engine) *http.Server {
 	return &http.Server{
@@ -188,4 +179,3 @@ func connectRedis(cfg config.RedisConfig) (*redis.Client, error) {
 	log.Printf("connected to redis")
 	return cli, nil
 }
-

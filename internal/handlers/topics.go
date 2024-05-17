@@ -11,6 +11,7 @@ import (
 
 func setupTopics(g *gin.RouterGroup, deps *dependencies) {
 	h := &TopicHandler{deps: deps}
+	g.GET("/", h.getAllTopics) // Allow unauthenticated access to get all topics
 	g.Use(AuthMiddleware(deps.redis))
 	h.bind(g)
 }
@@ -21,7 +22,6 @@ type TopicHandler struct {
 
 // bind is a method that binds the handlers to the router group
 func (h *TopicHandler) bind(g *gin.RouterGroup) {
-	g.GET("/", h.getAllTopics)
 	g.GET("/:id", h.getTopicByID)
 	g.POST("/", h.createTopic)
 	g.PUT("/:id", h.updateTopic)
