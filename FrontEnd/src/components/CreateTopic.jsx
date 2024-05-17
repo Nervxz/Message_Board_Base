@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import "../index.css";
 import { defaultAxios } from "../defaultAxios";
 
@@ -8,6 +9,7 @@ const CreateTopic = () => {
   const [description, setDescription] = useState("");
   const { token } = useAuth();
   const [message, setMessage] = useState("");
+  const navigate = useNavigate();
 
   // Handle create topic
   const handleSubmit = async (e) => {
@@ -16,15 +18,23 @@ const CreateTopic = () => {
       const response = await defaultAxios.post(
         "/topics/",
         { Title: title, Body: description },
-        { headers: { Authorization: `Bearer ${token}` } }
+        { headers: { Authorization: `Bearer ${token}` }, withCredentials: true }
       );
       setMessage("Topic created successfully");
       console.log("Topic created successfully", response.data);
+      // Redirect to home page after 2 seconds
+      setTimeout(() => {
+        navigate("/");
+      }, 2000);
     } catch (error) {
       setMessage("Error creating topic");
+      console.error(
+        "Error creating topic:",
+        error.response ? error.response.data : error.message
+      );
     }
   };
-  // Css for Create Topic
+
   return (
     <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Create Topic</h2>
