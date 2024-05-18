@@ -1,17 +1,15 @@
-// CommentForm.jsx
 import React, { useState } from "react";
 import { defaultAxios } from "../defaultAxios";
+import { useAuth } from "../context/AuthContext";
 
 // eslint-disable-next-line react/prop-types
 const CommentForm = ({ topicId }) => {
   const [comment, setComment] = useState("");
+  const { token } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Retrieve the token from localStorage
-      const token = localStorage.getItem("token");
-
       // Include the token in the headers
       const response = await defaultAxios.post(
         "/comments/",
@@ -23,6 +21,7 @@ const CommentForm = ({ topicId }) => {
           headers: {
             Authorization: `Bearer ${token}`,
           },
+          withCredentials: true,
         }
       );
       console.log("Comment posted successfully:", response.data);

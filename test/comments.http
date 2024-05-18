@@ -1,4 +1,27 @@
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "admin1"
+}
+
+
+
+
 GET       http://localhost:8080/comments/1
 
 ###
-GET       http://localhost:8080/comments/
+POST        http://localhost:8080/comments/
+
+
+### Add a Comment
+POST http://localhost:8080/comments
+Content-Type: application/json
+Authorization: e8fa132365b779b31b58dd8639e26ac4
+
+{
+    "Comment": "This is a sample comment.",
+    "TopicID": 1,
+    "UserID": 12
+}
