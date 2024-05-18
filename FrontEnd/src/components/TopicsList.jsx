@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { defaultAxios } from "../defaultAxios";
+import "../index.css";
 
 const TopicsList = () => {
   const [topics, setTopics] = useState([]);
@@ -31,7 +32,7 @@ const TopicsList = () => {
 
   return (
     <div className="topics-list max-w-4xl mx-auto mt-10 p-6 bg-white shadow-md rounded-md border border-gray-300">
-      <h2 className="text-2xl font-bold mb-4 text-center">Topics</h2>
+      <h2 className="text-2xl font-bold mb-4 mt-10 text-center">Topics</h2>
       {topics.length === 0 ? (
         <p>No topics available.</p>
       ) : (
@@ -39,7 +40,7 @@ const TopicsList = () => {
           {topics.map((topic) => (
             <li
               key={topic.TopicID}
-              className="mb-4 p-4 bg-gray-100 shadow-md rounded-md"
+              className="mb-20 p-4 mt-10 bg-gray-100 shadow-md rounded-md border border-black"
             >
               <h3 className="text-xl font-bold">{topic.Title}</h3>
               <p>{topic.Body}</p>

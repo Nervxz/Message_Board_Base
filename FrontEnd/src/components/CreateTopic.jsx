@@ -36,8 +36,8 @@ const CreateTopic = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
-      <h2 className="text-2xl font-bold mb-4 text-center">Create Topic</h2>
+    <div className="max-w-md mx-auto mt-10 p-6 bg-black shadow-md rounded-md">
+      <h2 className="text-2xl font-bold mb-4 text-center">Create Topics</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">
           <label className="block text-gray-700">Title:</label>
@@ -45,7 +45,7 @@ const CreateTopic = () => {
             type="text"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring focus:border-blue-300"
+            className="w-full px-3 py-2 border rounded-md focus:ring focus:border-blue-300"
           />
         </div>
         <div className="mb-4">
@@ -58,7 +58,7 @@ const CreateTopic = () => {
         </div>
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600"
+          className="w-full bg-blue-500 text-black py-2 rounded-md hover:bg-blue-600"
         >
           Create Topic
         </button>

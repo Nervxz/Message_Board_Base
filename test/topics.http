@@ -1,0 +1,46 @@
+### Sign In
+POST http://localhost:8080/auth/signin
+Content-Type: application/json
+
+{
+  "username": "admin1",
+  "password": "admin1"
+}
+
+### Get all Topic
+GET  http://localhost:8080/topics
+Content-Type: application/json
+Authorization: c2a94e72c23bb38eeb9f544a4c464eb1
+
+
+### Get 1 Topic from id
+GET  http://localhost:8080/topics/1
+Content-Type: application/json
+Authorization: 7948329ab98c6dc0c064b1b999223577
+
+
+### Create Topic 
+POST  http://localhost:8080/topics/
+Content-Type: application/json
+Authorization: e33c7251d9ea3f2ffc09ebea71ce33d7
+
+{
+   
+  "Title": "New Topic Title3",
+  "Body": "This is the body of the new topic2."
+  
+}
+
+
+
+### Update Topic
+PUT  http://localhost:8080/topics/2
+Content-Type: application/json
+Authorization: 68ae9c9467334588627e6a39d88c3097
+
+{
+   
+  "Title": "New Topic Title",
+  "Body": "This is the body of the new topic233."
+  
+}

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { defaultAxios } from "../defaultAxios";
 import { useNavigate } from "react-router-dom";
+import "../index.css";
 
 const SignUp = () => {
   const [username, setUsername] = useState("");

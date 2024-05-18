@@ -10,11 +10,6 @@ type Comment struct {
 	CommentsTime time.Time `json:"CommentsTime"`
 }
 
-type Auth struct {
-	Username string `json:"Username"`
-	Password string `json:"Password"`
-}
-
 type Topic struct {
 	TopicID       int       `json:"TopicID"`
 	UserID        int       `json:"UserID"`

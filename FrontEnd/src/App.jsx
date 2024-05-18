@@ -6,6 +6,7 @@ import Home from "./components/Home";
 import CreateTopic from "./components/CreateTopic";
 import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider } from "./context/AuthContext";
+import "./index.css";
 
 const App = () => {
   return (
