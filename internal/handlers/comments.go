@@ -20,10 +20,23 @@ type CommentHandler struct {
 }
 
 // createComment is a handler that creates a new comment
+// createComment is a handler that creates a new comment
 func (h *CommentHandler) createComment(gtx *gin.Context) {
 	var c model.Comment
 	if err := gtx.BindJSON(&c); err != nil {
 		gtx.String(http.StatusBadRequest, "Invalid request payload")
+		return
+	}
+
+	// Check if the topicId exists
+	var exists bool
+	err := h.deps.db.QueryRow("SELECT EXISTS(SELECT 1 FROM Topics WHERE TopicID = $1)", c.TopicID).Scan(&exists)
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to check topicId: %v", err)
+		return
+	}
+	if !exists {
+		gtx.String(http.StatusBadRequest, "Invalid topicId")
 		return
 	}
 
