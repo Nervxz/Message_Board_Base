@@ -6,7 +6,8 @@ import CommentForm from "./CommentForm";
 const TopicDetail = () => {
   const { id } = useParams();
   const [topic, setTopic] = useState(null);
-  const [comments, setComments] = useState([]);
+  const [comments, setComments] = useState([]); // Initialize as an empty array
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchTopic = async () => {
@@ -15,6 +16,7 @@ const TopicDetail = () => {
         setTopic(response.data);
       } catch (error) {
         console.error("Error fetching topic:", error);
+        setError("Error fetching topic");
       }
     };
 
@@ -24,12 +26,17 @@ const TopicDetail = () => {
         setComments(response.data);
       } catch (error) {
         console.error("Error fetching comments:", error);
+        setError("Error fetching comments");
       }
     };
 
     fetchTopic();
     fetchComments();
   }, [id]);
+
+  if (error) {
+    return <p>{error}</p>;
+  }
 
   return (
     <div className="container mx-auto p-4">
@@ -41,11 +48,15 @@ const TopicDetail = () => {
       )}
       <div>
         <h2 className="text-xl font-bold mt-4">Comments</h2>
-        {comments.map((comment) => (
-          <div key={comment.CommentID} className="border p-2 my-2">
-            <p>{comment.Comment}</p>
-          </div>
-        ))}
+        {comments.length > 0 ? (
+          comments.map((comment) => (
+            <div key={comment.CommentID} className="border p-2 my-2">
+              <p>{comment.Comment}</p>
+            </div>
+          ))
+        ) : (
+          <p>No comments yet.</p>
+        )}
       </div>
       <CommentForm topicID={id} />
     </div>
