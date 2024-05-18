@@ -1,36 +1,47 @@
+// CommentForm.jsx
 import React, { useState } from "react";
 import { defaultAxios } from "../defaultAxios";
 
 // eslint-disable-next-line react/prop-types
-const CommentForm = ({ topicID }) => {
+const CommentForm = ({ topicId }) => {
   const [comment, setComment] = useState("");
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await defaultAxios.post(`/comments`, {
-        Comment: comment,
-        TopicID: topicID,
-      });
+      // Retrieve the token from localStorage
+      const token = localStorage.getItem("token");
+
+      // Include the token in the headers
+      const response = await defaultAxios.post(
+        "/comments/",
+        {
+          comment,
+          topicId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      console.log("Comment posted successfully:", response.data);
+
       setComment("");
-      // Optionally refresh comments
     } catch (error) {
-      console.error("Error submitting comment:", error);
+      console.error("Error posting comment:", error);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="mt-4">
+    <form onSubmit={handleSubmit}>
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        className="w-full border p-2"
-        placeholder="Add a comment"
+        placeholder="Write your comment..."
         required
-      ></textarea>
-      <button type="submit" className="bg-blue-500 text-white px-4 py-2 mt-2">
-        Submit
-      </button>
+      />
+      <button type="submit">Submit</button>
     </form>
   );
 };
