@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { defaultAxios } from "../defaultAxios";
 import "../index.css";
 
@@ -42,8 +43,9 @@ const TopicsList = () => {
               key={topic.TopicID}
               className="mb-10 p-4 mt-10 bg-gray-100 shadow-md rounded-md border border-black"
             >
-              <h3 className="text-xl font-bold">{topic.Title}</h3>
-
+              <h3 className="text-xl font-bold">
+                <Link to={`/topics/${topic.TopicID}`}>{topic.Title}</Link>
+              </h3>
               <p className="text-sm text-gray-500">
                 Published on: {new Date(topic.DatePublished).toLocaleString()}
               </p>

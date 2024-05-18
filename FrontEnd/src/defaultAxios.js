@@ -1,11 +1,17 @@
 import axios from "axios";
-const getToken = () => localStorage.getItem("token"); // Assuming the token is stored in localStorage
+
+const getToken = () => localStorage.getItem("token");
 
 const defaultAxios = axios.create({
   baseURL: "http://localhost:8080", // Ensure this is the correct backend URL
-  headers: {
-    Authorization: `Bearer ${getToken()}`, // Include the token in the Authorization header
-  },
+});
+
+defaultAxios.interceptors.request.use((config) => {
+  const token = getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export { defaultAxios };

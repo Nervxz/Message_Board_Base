@@ -11,7 +11,9 @@ import (
 
 func setupTopics(g *gin.RouterGroup, deps *dependencies) {
 	h := &TopicHandler{deps: deps}
-	g.GET("/", h.getAllTopics) // Allow unauthenticated access to get all topics
+	g.GET("/", h.getAllTopics)                    // Allow unauthenticated access to get all topics
+	g.GET("/:id", h.getTopicByID)                 // Allow unauthenticated access to get topic details
+	g.GET("/:id/comments", h.getCommentsForTopic) // Allow unauthenticated access to get comments for a topic
 	g.Use(AuthMiddleware(deps.redis))
 	h.bind(g)
 }
@@ -22,7 +24,6 @@ type TopicHandler struct {
 
 // bind is a method that binds the handlers to the router group
 func (h *TopicHandler) bind(g *gin.RouterGroup) {
-	g.GET("/:id", h.getTopicByID)
 	g.POST("/", h.createTopic)
 	g.PUT("/:id", h.updateTopic)
 }
@@ -64,6 +65,29 @@ func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
 		return
 	}
 	gtx.JSON(http.StatusOK, c)
+}
+
+// getCommentsForTopic is a handler that returns all comments for a specific topic
+func (h *TopicHandler) getCommentsForTopic(gtx *gin.Context) {
+	topicID := gtx.Param("id")
+	rows, err := h.deps.db.Query("SELECT CommentID, Comment, TopicID, UserID, CommentsTime FROM Comments WHERE TopicID = $1", topicID)
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to query comments: %v", err)
+		return
+	}
+	defer rows.Close()
+
+	var comments []model.Comment
+	for rows.Next() {
+		var c model.Comment
+		if err := rows.Scan(&c.CommentID, &c.Comment, &c.TopicID, &c.UserID, &c.CommentsTime); err != nil {
+			gtx.String(http.StatusInternalServerError, "Failed to scan comment: %v", err)
+			return
+		}
+		comments = append(comments, c)
+	}
+
+	gtx.JSON(http.StatusOK, comments)
 }
 
 // createTopic is a handler that creates a new topic
