@@ -43,7 +43,7 @@ const TopicsList = () => {
               className="mb-10 p-4 mt-10 bg-gray-100 shadow-md rounded-md border border-black"
             >
               <h3 className="text-xl font-bold">{topic.Title}</h3>
-              <p>{topic.Body}</p>
+
               <p className="text-sm text-gray-500">
                 Published on: {new Date(topic.DatePublished).toLocaleString()}
               </p>
