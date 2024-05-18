@@ -36,7 +36,7 @@ const CreateTopic = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto mt-10 p-6 bg-black shadow-md rounded-md">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-md rounded-md">
       <h2 className="text-2xl font-bold mb-4 text-center">Create Topics</h2>
       <form onSubmit={handleSubmit}>
         <div className="mb-4">

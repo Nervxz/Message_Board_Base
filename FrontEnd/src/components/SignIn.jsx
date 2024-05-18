@@ -31,30 +31,39 @@ const SignIn = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <div>
-        <h2 className="text-2xl font-bold mb-4">Sign In</h2>
-        <label>Username:</label>
-        <input
-          className="border border-sky-500"
-          type="text"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
-      </div>
-      <div>
-        <label>Password:</label>
-
-        <input
-          className="border border-sky-500"
-          type="password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
-      </div>
-      <button type="submit">Sign In</button>
-      {message && <p>{message}</p>}
-    </form>
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <form
+        onSubmit={handleSubmit}
+        className="w-full max-w-md p-8 bg-white rounded shadow-md"
+      >
+        <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
+        <div className="mb-4">
+          <label className="block text-gray-700">Username:</label>
+          <input
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500"
+            type="text"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+        </div>
+        <div className="mb-6">
+          <label className="block text-gray-700">Password:</label>
+          <input
+            className="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-sky-500"
+            type="password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+        </div>
+        <button
+          type="submit"
+          className="w-full py-2 bg-sky-500 text-white font-bold rounded hover:bg-sky-600 focus:outline-none focus:ring-2 focus:ring-sky-500"
+        >
+          Sign In
+        </button>
+        {message && <p className="mt-4 text-center text-red-500">{message}</p>}
+      </form>
+    </div>
   );
 };
 
