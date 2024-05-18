@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { defaultAxios } from "../defaultAxios";
 
+// eslint-disable-next-line react/prop-types
 const CommentForm = ({ topicID }) => {
   const [comment, setComment] = useState("");
 
