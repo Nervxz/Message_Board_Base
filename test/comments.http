@@ -21,7 +21,7 @@ Content-Type: application/json
 Authorization: e8fa132365b779b31b58dd8639e26ac4
 
 {
-    "Comment": "This is a sample comment.",
-    "TopicID": 1,
-    "UserID": 12
+    "comment": "This is a sample comment.",
+    "TopicId": 1,
+    "useriD": 1222
 }

@@ -3,7 +3,7 @@ import { defaultAxios } from "../defaultAxios";
 import { useAuth } from "../context/AuthContext";
 
 // eslint-disable-next-line react/prop-types
-const CommentForm = ({ topicId }) => {
+const CommentForm = ({ topicID }) => {
   const [comment, setComment] = useState("");
   const { token } = useAuth();
 
@@ -14,8 +14,8 @@ const CommentForm = ({ topicId }) => {
       const response = await defaultAxios.post(
         "/comments/",
         {
-          comment,
-          topicId,
+          Comment: comment,
+          TopicID: parseInt(topicID, 10), // Ensure TopicID is an integer
         },
         {
           headers: {
@@ -24,8 +24,8 @@ const CommentForm = ({ topicId }) => {
           withCredentials: true,
         }
       );
-      console.log("Comment posted successfully:", response.data);
 
+      console.log("Comment posted successfully:", response.data);
       setComment("");
     } catch (error) {
       console.error("Error posting comment:", error);
@@ -37,10 +37,9 @@ const CommentForm = ({ topicId }) => {
       <textarea
         value={comment}
         onChange={(e) => setComment(e.target.value)}
-        placeholder="Write your comment..."
-        required
+        placeholder="Write your comment here"
       />
-      <button type="submit">Submit</button>
+      <button type="submit">Submit Comment</button>
     </form>
   );
 };

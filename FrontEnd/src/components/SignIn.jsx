@@ -19,7 +19,7 @@ const SignIn = () => {
         username,
         password,
       });
-      localStorage.setItem("session_token", response.data.token);
+      localStorage.setItem("session_token", response.data.token); // Store the token in local storage
       setMessage("Sign in successful");
       console.log("Sign in successful", response.data);
       signIn(response.data.token);

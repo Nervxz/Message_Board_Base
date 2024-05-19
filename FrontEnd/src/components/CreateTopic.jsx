@@ -22,10 +22,10 @@ const CreateTopic = () => {
       );
       setMessage("Topic created successfully");
       console.log("Topic created successfully", response.data);
-      // Redirect to home page after 2 seconds
+      // Redirect to home page after 1 seconds
       setTimeout(() => {
         navigate("/");
-      }, 2000);
+      }, 1000);
     } catch (error) {
       setMessage("Error creating topic");
       console.error(

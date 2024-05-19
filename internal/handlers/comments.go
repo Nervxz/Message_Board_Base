@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 
@@ -19,14 +20,15 @@ type CommentHandler struct {
 	deps *dependencies
 }
 
-// createComment is a handler that creates a new comment
-// createComment is a handler that creates a new comment
 func (h *CommentHandler) createComment(gtx *gin.Context) {
 	var c model.Comment
 	if err := gtx.BindJSON(&c); err != nil {
 		gtx.String(http.StatusBadRequest, "Invalid request payload")
+		log.Printf("Error binding JSON: %v", err)
 		return
 	}
+
+	log.Printf("Received comment: %+v", c)
 
 	// Check if the topicId exists
 	var exists bool
