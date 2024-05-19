@@ -30,7 +30,7 @@ func (h *TopicHandler) bind(g *gin.RouterGroup) {
 
 // getAllTopics is a handler that returns all topics
 func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
-	rows, err := h.deps.db.Query("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics")
+	rows, err := h.deps.db.Query("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics ORDER BY DatePublished DESC")
 	if err != nil {
 		gtx.String(http.StatusInternalServerError, "Failed to query topics: %v", err)
 		return
