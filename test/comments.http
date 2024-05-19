@@ -18,10 +18,10 @@ POST        http://localhost:8080/comments/
 ### Add a Comment
 POST http://localhost:8080/comments
 Content-Type: application/json
-Authorization: e8fa132365b779b31b58dd8639e26ac4
+Authorization: 2d3f88e56a3935b2ec6dfa44cd279608
 
 {
     "comment": "This is a sample comment.",
-    "TopicId": 1,
-    "useriD": 1222
+    "TopicId": 35,
+    "useriD": 1
 }

@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import "../index.css";
 
-// Navbar component
 const Navbar = () => {
   const { isAuthenticated, signOut } = useAuth();
 

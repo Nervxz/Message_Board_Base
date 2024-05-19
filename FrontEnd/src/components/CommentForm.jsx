@@ -15,11 +15,11 @@ const CommentForm = ({ topicID }) => {
         "/comments/",
         {
           Comment: comment,
-          TopicID: parseInt(topicID, 10), // Ensure TopicID is an integer
+          TopicID: parseInt(topicID, 10), // Convert the topicID to an integer because topicID could be a string, (base-10) for using digits 0-9
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`,
+            Authorization: `Bearer ${token}`, // Send the token in the header
           },
           withCredentials: true,
         }
