@@ -151,11 +151,46 @@ func (h *TopicHandler) updateTopic(gtx *gin.Context) {
 func (h *TopicHandler) upvoteTopic(gtx *gin.Context) {
 	id := gtx.Param("id")
 
-	_, err := h.deps.db.Exec("UPDATE Topics SET Upvotes = Upvotes + 1 WHERE TopicID = $1", id)
-	if err != nil {
-		gtx.String(http.StatusInternalServerError, "Failed to upvotes topic: %v", err)
+	// Check if the user is authenticated
+	userID, exists := gtx.Get("userID")
+	if !exists {
+		gtx.JSON(http.StatusUnauthorized, gin.H{"error": "User not authenticated"})
 		return
 	}
 
-	gtx.String(http.StatusOK, "Topic upvotes successfully")
+	// Convert userID to int
+	userIDInt, err := strconv.Atoi(userID.(string))
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to parse userID")
+		return
+	}
+
+	// Check if the user has already upvoted the topic
+	var upvoted bool
+	err = h.deps.db.QueryRow("SELECT EXISTS(SELECT 1 FROM Upvotes WHERE TopicID = $1 AND UserID = $2)", id, userIDInt).Scan(&upvoted)
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to check upvote status: %v", err)
+		return
+	}
+
+	if upvoted {
+		gtx.JSON(http.StatusBadRequest, gin.H{"error": "User has already upvoted the topic"})
+		return
+	}
+
+	// Increment the upvotes count for the topic
+	_, err = h.deps.db.Exec("UPDATE Topics SET Upvotes = Upvotes + 1 WHERE TopicID = $1", id)
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to upvote topic: %v", err)
+		return
+	}
+
+	// Insert the upvote record into the Upvotes table
+	_, err = h.deps.db.Exec("INSERT INTO Upvotes (TopicID, UserID) VALUES ($1, $2)", id, userIDInt)
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to record upvote: %v", err)
+		return
+	}
+
+	gtx.JSON(http.StatusOK, gin.H{"message": "Topic upvoted successfully"})
 }
