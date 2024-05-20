@@ -14,6 +14,7 @@ func setupTopics(g *gin.RouterGroup, deps *dependencies) {
 	g.GET("/", h.getAllTopics)                    // Allow unauthenticated access to get all topics
 	g.GET("/:id", h.getTopicByID)                 // Allow unauthenticated access to get topic details
 	g.GET("/:id/comments", h.getCommentsForTopic) // Allow unauthenticated access to get comments for a topic
+	g.POST("/:id/upvote", h.upvoteTopic)
 	g.Use(AuthMiddleware(deps.redis))
 	h.bind(g)
 }
@@ -28,9 +29,9 @@ func (h *TopicHandler) bind(g *gin.RouterGroup) {
 	g.PUT("/:id", h.updateTopic)
 }
 
-// getAllTopics is a handler that returns all topics
+// getAllTopics is a handler that returns all topics and upvotes
 func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
-	rows, err := h.deps.db.Query("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics ORDER BY DatePublished DESC")
+	rows, err := h.deps.db.Query("SELECT TopicID, Title, Body, DatePublished, UserID, Upvotes FROM Topics ORDER BY Upvotes DESC, DatePublished DESC")
 	if err != nil {
 		gtx.String(http.StatusInternalServerError, "Failed to query topics: %v", err)
 		return
@@ -40,7 +41,7 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 	var topics []model.Topic
 	for rows.Next() {
 		var c model.Topic
-		if err := rows.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID); err != nil {
+		if err := rows.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID, &c.Upvotes); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan topic: %v", err)
 			return
 		}
@@ -144,4 +145,17 @@ func (h *TopicHandler) updateTopic(gtx *gin.Context) {
 	}
 
 	gtx.String(http.StatusOK, "Topic updated successfully")
+}
+
+// Increments the upvotes count for a topic
+func (h *TopicHandler) upvoteTopic(gtx *gin.Context) {
+	id := gtx.Param("id")
+
+	_, err := h.deps.db.Exec("UPDATE Topics SET Upvotes = Upvotes + 1 WHERE TopicID = $1", id)
+	if err != nil {
+		gtx.String(http.StatusInternalServerError, "Failed to upvotes topic: %v", err)
+		return
+	}
+
+	gtx.String(http.StatusOK, "Topic upvotes successfully")
 }

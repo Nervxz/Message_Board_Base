@@ -23,6 +23,16 @@ const TopicsList = () => {
     fetchTopics();
   }, []);
 
+  const handleUpvote = async (topicId) => {
+    try {
+      await defaultAxios.post(`/topics/${topicId}/upvote`);
+      const response = await defaultAxios.get("/topics/");
+      setTopics(response.data);
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (loading) {
     return <p>Loading topics...</p>;
   }
@@ -50,6 +60,15 @@ const TopicsList = () => {
               <p className="text-sm text-gray-500">
                 Published on: {new Date(topic.DatePublished).toLocaleString()}
               </p>
+              <div className="flex items-center mt-2">
+                <button
+                  onClick={() => handleUpvote(topic.TopicID)}
+                  className="mr-2 px-4 py-2 bg-blue-500 text-white rounded"
+                >
+                  Upvote
+                </button>
+                <span>{topic.Upvotes} Upvotes</span>
+              </div>
             </li>
           ))}
         </ul>

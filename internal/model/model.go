@@ -16,6 +16,7 @@ type Topic struct {
 	Title         string    `json:"Title"`
 	Body          string    `json:"Body"`
 	DatePublished time.Time `json:"DatePublished"`
+	Upvotes       int       `json:"Upvotes"`
 }
 
 type User struct {

@@ -8,7 +8,7 @@ import (
 
 // Migrate table to database
 func MigrateDB(db *sql.DB) error {
-    _, err := db.Exec(`
+	_, err := db.Exec(`
         CREATE TABLE IF NOT EXISTS Users (
             UserID SERIAL PRIMARY KEY,
             Username VARCHAR(255) NOT NULL,
@@ -23,6 +23,8 @@ func MigrateDB(db *sql.DB) error {
             DatePublished TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UserID INTEGER REFERENCES Users(UserID)
             
+
+            
         );
 
         CREATE TABLE IF NOT EXISTS Comments (
@@ -32,7 +34,9 @@ func MigrateDB(db *sql.DB) error {
             UserID INTEGER REFERENCES Users(UserID),
             CommentsTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
+        ALTER TABLE Topics ADD COLUMN IF NOT EXISTS Upvotes INTEGER DEFAULT 0;
+
     `)
 
-    return err
+	return err
 }
