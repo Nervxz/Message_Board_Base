@@ -28,7 +28,13 @@ const CommentForm = ({ topicID }) => {
       console.log("Comment posted successfully:", response.data);
       setComment("");
     } catch (error) {
-      console.error("Error posting comment:", error);
+      if (error.response && error.response.status === 401) {
+        // Handle unauthorized error
+        alert("Sign in to comment");
+      } else {
+        // Handle other errors
+        console.error("Error posting comment:", error);
+      }
     }
   };
 
