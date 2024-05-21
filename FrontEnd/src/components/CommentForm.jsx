@@ -6,20 +6,20 @@ import { useAuth } from "../context/AuthContext";
 const CommentForm = ({ topicID }) => {
   const [comment, setComment] = useState("");
   const { token } = useAuth();
+  const [error, setError] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      // Include the token in the headers
       const response = await defaultAxios.post(
         "/comments/",
         {
           Comment: comment,
-          TopicID: parseInt(topicID, 10), // Convert the topicID to an integer because topicID could be a string, (base-10) for using digits 0-9
+          TopicID: parseInt(topicID, 10),
         },
         {
           headers: {
-            Authorization: `Bearer ${token}`, // Send the token in the header
+            Authorization: `Bearer ${token}`,
           },
           withCredentials: true,
         }
@@ -27,26 +27,37 @@ const CommentForm = ({ topicID }) => {
 
       console.log("Comment posted successfully:", response.data);
       setComment("");
+      setError(null);
     } catch (error) {
       if (error.response && error.response.status === 401) {
-        // Handle unauthorized error
         alert("Sign in to comment");
       } else {
-        // Handle other errors
         console.error("Error posting comment:", error);
+        setError("Error posting comment");
       }
     }
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <textarea
-        value={comment}
-        onChange={(e) => setComment(e.target.value)}
-        placeholder="Write your comment here"
-      />
-      <button type="submit">Submit Comment</button>
-    </form>
+    <div className="bg-white shadow-md rounded-lg p-6 mt-6">
+      <h3 className="text-2xl font-bold mb-4">Leave a Comment</h3>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
+      <form onSubmit={handleSubmit}>
+        <textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Write your comment here"
+          className="w-full p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 mb-4"
+          rows="4"
+        />
+        <button
+          type="submit"
+          className="bg-blue-500 text-white font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition duration-300"
+        >
+          Submit Comment
+        </button>
+      </form>
+    </div>
   );
 };
 

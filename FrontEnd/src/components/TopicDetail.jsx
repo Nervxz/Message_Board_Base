@@ -6,7 +6,7 @@ import CommentForm from "./CommentForm";
 const TopicDetail = () => {
   const { id } = useParams();
   const [topic, setTopic] = useState(null);
-  const [comments, setComments] = useState([]); // Initialize as an empty array
+  const [comments, setComments] = useState([]);
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -35,30 +35,39 @@ const TopicDetail = () => {
   }, [id]);
 
   if (error) {
-    return <p>{error}</p>;
+    return <p className="text-red-500">{error}</p>;
   }
 
   return (
-    <div className="container mx-auto p-4">
-      {topic && (
-        <div>
-          <h1 className="text-2xl font-bold">{topic.Title}</h1>
-          <p>{topic.Body}</p>
+    <div className="container mx-auto p-6 bg-gray-100 min-h-screen">
+      {topic ? (
+        <div className="bg-white shadow-lg rounded-lg p-8 mb-6">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            {topic.Title}
+          </h1>
+          <p className="text-gray-700 text-lg">{topic.Body}</p>
         </div>
+      ) : (
+        <p className="text-center text-gray-500">Loading topic...</p>
       )}
-      <div>
-        <h2 className="text-xl font-bold mt-4">Comments</h2>
+      <div className="bg-white shadow-lg rounded-lg p-8">
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">Comments</h2>
         {comments.length > 0 ? (
           comments.map((comment) => (
-            <div key={comment.CommentID} className="border p-2 my-2">
-              <p>{comment.Comment}</p>
+            <div
+              key={comment.CommentID}
+              className="border-b border-gray-200 py-4"
+            >
+              <p className="text-gray-800">{comment.Comment}</p>
             </div>
           ))
         ) : (
-          <p>No comments yet.</p>
+          <p className="text-gray-500">No comments yet.</p>
         )}
       </div>
-      <CommentForm topicID={id} />
+      <div className="mt-6">
+        <CommentForm topicID={id} />
+      </div>
     </div>
   );
 };
