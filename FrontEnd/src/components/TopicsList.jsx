@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { defaultAxios } from "../defaultAxios";
 import { useAuth } from "../context/AuthContext";
 import "../index.css";
+import commentIcon from "../../public/comment.svg"; // Adjust the path as necessary
 
 const TopicsList = () => {
   const [topics, setTopics] = useState([]);
@@ -81,9 +82,14 @@ const TopicsList = () => {
               <p className="text-sm text-gray-500">
                 Published on: {new Date(topic.DatePublished).toLocaleString()}
               </p>
-              <p className="text-sm text-gray-500">
-                Comments: {topic.CommentCount}
-              </p>
+              <div className="flex items-center text-sm text-gray-500">
+                <img
+                  src={commentIcon}
+                  alt="Comment icon"
+                  className="w-6 h-6 mr-1"
+                />
+                <span>{topic.CommentCount}</span>
+              </div>
               <button
                 onClick={() => handleUpvote(topic.TopicID)}
                 className="mt-2 p-2 bg-blue-500 text-white rounded"
