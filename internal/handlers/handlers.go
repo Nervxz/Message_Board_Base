@@ -23,6 +23,5 @@ func Setup(g *gin.Engine, db *sql.DB, redis *redis.Client) *gin.Engine {
 	setupUsers(g.Group("/users"), deps)
 	setupAuth(g.Group("/auth"), deps)
 
-
 	return g
 }
