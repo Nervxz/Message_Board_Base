@@ -81,6 +81,9 @@ const TopicsList = () => {
               <p className="text-sm text-gray-500">
                 Published on: {new Date(topic.DatePublished).toLocaleString()}
               </p>
+              <p className="text-sm text-gray-500">
+                Comments: {topic.CommentCount}
+              </p>
               <button
                 onClick={() => handleUpvote(topic.TopicID)}
                 className="mt-2 p-2 bg-blue-500 text-white rounded"

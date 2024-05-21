@@ -32,8 +32,21 @@ func (h *TopicHandler) bind(g *gin.RouterGroup) {
 }
 
 // getAllTopics is a handler that returns all topics and upvotes
+// internal/handlers/topics.go
+
 func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
-	rows, err := h.deps.db.Query("SELECT TopicID, Title, Body, DatePublished, UserID, Upvotes FROM Topics ORDER BY Upvotes DESC, DatePublished DESC")
+	rows, err := h.deps.db.Query(`
+        SELECT 
+            t.TopicID, 
+            t.Title, 
+            t.Body, 
+            t.DatePublished, 
+            t.UserID, 
+            t.Upvotes,
+            (SELECT COUNT(*) FROM Comments c WHERE c.TopicID = t.TopicID) AS CommentCount
+        FROM Topics t
+        ORDER BY t.Upvotes DESC, t.DatePublished DESC
+    `)
 	if err != nil {
 		gtx.String(http.StatusInternalServerError, "Failed to query topics: %v", err)
 		return
@@ -43,7 +56,7 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 	var topics []model.Topic
 	for rows.Next() {
 		var c model.Topic
-		if err := rows.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID, &c.Upvotes); err != nil {
+		if err := rows.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID, &c.Upvotes, &c.CommentCount); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan topic: %v", err)
 			return
 		}
