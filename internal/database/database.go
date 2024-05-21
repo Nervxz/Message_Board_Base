@@ -34,7 +34,12 @@ func MigrateDB(db *sql.DB) error {
             UserID INTEGER REFERENCES Users(UserID),
             CommentsTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
-        ALTER TABLE Topics ADD COLUMN IF NOT EXISTS Upvotes INTEGER DEFAULT 0;
+        CREATE TABLE IF NOT EXISTS Upvotes (
+			UpvoteID SERIAL PRIMARY KEY,
+			TopicID INTEGER REFERENCES Topics(TopicID),
+			UserID INTEGER REFERENCES Users(UserID),
+			UNIQUE (TopicID, UserID)
+            );
 
     `)
 

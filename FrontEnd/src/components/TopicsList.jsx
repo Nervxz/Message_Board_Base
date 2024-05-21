@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { defaultAxios } from "../defaultAxios";
+import { useAuth } from "../context/AuthContext";
 import "../index.css";
 
 const TopicsList = () => {
   const [topics, setTopics] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const { isAuthenticated, token } = useAuth();
 
   useEffect(() => {
     const fetchTopics = async () => {
@@ -24,12 +26,31 @@ const TopicsList = () => {
   }, []);
 
   const handleUpvote = async (topicId) => {
+    if (!isAuthenticated) {
+      alert("Please sign in to vote.");
+      return;
+    }
+
     try {
-      await defaultAxios.post(`/topics/${topicId}/upvote`);
-      const response = await defaultAxios.get("/topics/");
-      setTopics(response.data);
+      await defaultAxios.post(
+        `/topics/${topicId}/upvote`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      // Update the topics state to reflect the new upvote count
+      setTopics((prevTopics) =>
+        prevTopics.map((topic) =>
+          topic.TopicID === topicId
+            ? { ...topic, Upvotes: topic.Upvotes + 1 }
+            : topic
+        )
+      );
     } catch (err) {
-      setError(err.message);
+      console.error("Error upvoting topic:", err);
     }
   };
 
@@ -60,15 +81,12 @@ const TopicsList = () => {
               <p className="text-sm text-gray-500">
                 Published on: {new Date(topic.DatePublished).toLocaleString()}
               </p>
-              <div className="flex items-center mt-2">
-                <button
-                  onClick={() => handleUpvote(topic.TopicID)}
-                  className="mr-2 px-4 py-2 bg-blue-500 text-white rounded"
-                >
-                  Upvote
-                </button>
-                <span>{topic.Upvotes} Upvotes</span>
-              </div>
+              <button
+                onClick={() => handleUpvote(topic.TopicID)}
+                className="mt-2 p-2 bg-blue-500 text-white rounded"
+              >
+                Upvote ({topic.Upvotes})
+              </button>
             </li>
           ))}
         </ul>
