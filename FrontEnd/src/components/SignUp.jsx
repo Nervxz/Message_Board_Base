@@ -12,6 +12,13 @@ const SignUp = () => {
   // Handle sign up
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Validation
+    if (!username || !password) {
+      setMessage("Username and password are required");
+      return;
+    }
+
     try {
       const response = await defaultAxios.post("/auth/signup", {
         username,
