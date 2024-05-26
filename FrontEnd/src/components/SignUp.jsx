@@ -28,7 +28,11 @@ const SignUp = () => {
       console.log("Sign up successful", response.data);
       navigate("/signin"); // Redirect to SignIn page
     } catch (error) {
-      setMessage("Error signing up");
+      if (error.response && error.response.status === 409) {
+        setMessage("Username already taken");
+      } else {
+        setMessage("Error signing up");
+      }
       console.error("Error signing up", error);
     }
   };
