@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nervxz/msg-board/internal/model"
+	"github.com/nervxz/msg-board/internal/dto"
 )
 
 func setupComments(g *gin.RouterGroup, deps *dependencies) {
@@ -25,7 +25,7 @@ type CommentHandler struct {
 }
 
 func (h *CommentHandler) createComment(gtx *gin.Context) {
-	var c model.Comment
+	var c dto.Comment
 	if err := gtx.BindJSON(&c); err != nil {
 		gtx.String(http.StatusBadRequest, "Invalid request payload")
 		log.Printf("Error binding JSON: %v", err)
@@ -80,9 +80,9 @@ func (h *CommentHandler) getCommentsByTopicID(gtx *gin.Context) {
 	}
 	defer rows.Close()
 
-	var comments []model.Comment
+	var comments []dto.Comment
 	for rows.Next() {
-		var c model.Comment
+		var c dto.Comment
 		if err := rows.Scan(&c.CommentID, &c.Comment, &c.TopicID, &c.UserID, &c.CommentsTime); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan comment: %v", err)
 			return

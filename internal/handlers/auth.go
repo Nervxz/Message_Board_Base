@@ -8,7 +8,6 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/nervxz/msg-board/internal/utils"
-	"golang.org/x/crypto/bcrypt"
 )
 
 /*
@@ -53,12 +52,7 @@ func (h *AuthHandler) signup(gtx *gin.Context) {
 		return
 	}
 
-	// Hash the password
-	hashedPassword, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-	if err != nil {
-		gtx.String(http.StatusInternalServerError, "Failed to hash password: %v", err)
-		return
-	}
+	hashedPassword := utils.HashPass(user.Password)
 
 	// Insert the user into the database
 	_, err = h.deps.db.Exec("INSERT INTO Users (Username, Password) VALUES ($1, $2)", user.Username, hashedPassword)
@@ -97,7 +91,7 @@ func (h *AuthHandler) signin(gtx *gin.Context) {
 	}
 
 	// Compare the stored hashed password with the provided password
-	if err := bcrypt.CompareHashAndPassword([]byte(dbUser.Password), []byte(user.Password)); err != nil {
+	if !utils.CheckPass(user.Password, dbUser.Password) {
 		gtx.String(http.StatusUnauthorized, "Invalid username or password")
 		return
 	}

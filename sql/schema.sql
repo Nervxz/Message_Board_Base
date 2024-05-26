@@ -7,36 +7,42 @@ DB migration on service startup:
 instance will handle the migration?
 */
 
-CREATE TABLE IF NOT EXISTS Users
+drop schema if exists msg_board cascade;
+
+create schema msg_board;
+
+create table if not exists msg_board.users
 (
-    UserID         SERIAL PRIMARY KEY,
-    Username       VARCHAR(255) NOT NULL,
-    Password       BYTEA        NOT NULL,
-    RegisteredTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id         serial primary key,
+    username   varchar(255) unique not null,
+    password   bytea               not null,
+    created_at timestamp with time zone,
+    updated_at timestamp with time zone
 );
 
-CREATE TABLE IF NOT EXISTS Topics
+create table if not exists msg_board.topics
 (
-    TopicID       SERIAL PRIMARY KEY,
-    Title         VARCHAR(255) NOT NULL,
-    Body          TEXT         NOT NULL,
-    DatePublished TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UserID        INTEGER REFERENCES Users (UserID)
+    id         serial primary key,
+    by         integer references msg_board.users (id),
+    title      varchar(255) not null,
+    body       text         not null,
+    created_at timestamp with time zone
 );
 
-CREATE TABLE IF NOT EXISTS Comments
+create table if not exists msg_board.comments
 (
-    CommentID    SERIAL PRIMARY KEY,
-    Comment      TEXT NOT NULL,
-    TopicID      INTEGER REFERENCES Topics (TopicID),
-    UserID       INTEGER REFERENCES Users (UserID),
-    CommentsTime TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    id         serial primary key,
+    by         integer references msg_board.users (id),
+    content    text not null,
+    topic_id   integer references msg_board.topics (id),
+    created_at timestamp with time zone
 );
 
-CREATE TABLE IF NOT EXISTS Upvotes
+create table if not exists msg_board.votes
 (
-    UpvoteID SERIAL PRIMARY KEY,
-    TopicID  INTEGER REFERENCES Topics (TopicID),
-    UserID   INTEGER REFERENCES Users (UserID),
-    UNIQUE (TopicID, UserID)
+    id         serial primary key,
+    by         integer references msg_board.users (id),
+    topic_id   integer references msg_board.topics (id),
+    unique (by, topic_id),
+    created_at timestamp with time zone
 );

@@ -101,12 +101,12 @@ func newServer() (*server, error) {
 		log.Fatalf("Failed to resolve configuration: %v", err)
 	}
 
-	db, err := connectDB(cfg.DB)
+	db, err := config.ConnectDB(cfg.DB)
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
 	}
 
-	redisClient, err := connectRedis(cfg.Redis)
+	redisClient, err := config.ConnectRedis(cfg.Redis)
 	if err != nil {
 		return nil, err
 	}
@@ -140,36 +140,4 @@ func newHTTP(route *gin.Engine) *http.Server {
 		Addr:    utils.LoadEnvOrDefault("SERVER_ADDR", ":8080"),
 		Handler: route.Handler(),
 	}
-}
-
-func connectDB(cfg config.DBConfig) (*sql.DB, error) {
-	// open Go client
-	cli, err := sql.Open("pgx", cfg.URL)
-	if err != nil {
-		log.Printf("fail to connect to database: %v", err)
-		return nil, err
-	}
-
-	// ping check
-	if err = cli.PingContext(context.Background()); err != nil {
-		log.Printf("fail to ping database: %v", err)
-		return nil, err
-	}
-
-	log.Printf("connected to DB")
-	return cli, nil
-}
-
-func connectRedis(cfg config.RedisConfig) (*redis.Client, error) {
-	cli := redis.NewClient(&redis.Options{Addr: cfg.URL})
-
-	// ping check
-	ping := cli.Ping(context.Background())
-	if err := ping.Err(); err != nil {
-		log.Printf("fail to ping redis: %v", err)
-		return nil, err
-	}
-
-	log.Printf("connected to redis")
-	return cli, nil
 }

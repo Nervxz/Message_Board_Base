@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	"github.com/gin-gonic/gin"
-	"github.com/nervxz/msg-board/internal/model"
+	"github.com/nervxz/msg-board/internal/dto"
 )
 
 func setupTopics(g *gin.RouterGroup, deps *dependencies) {
@@ -52,9 +52,9 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 	}
 	defer rows.Close()
 
-	var topics []model.Topic
+	var topics []dto.Topic
 	for rows.Next() {
-		var c model.Topic
+		var c dto.Topic
 		if err := rows.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID, &c.Upvotes, &c.CommentCount); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan topic: %v", err)
 			return
@@ -70,7 +70,7 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
 	id := gtx.Param("id")
 	row := h.deps.db.QueryRow("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics WHERE TopicID = $1", id)
-	var c model.Topic
+	var c dto.Topic
 	if err := row.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID); err != nil {
 		if err == sql.ErrNoRows {
 			gtx.String(http.StatusNotFound, "Topic not found")
@@ -92,9 +92,9 @@ func (h *TopicHandler) getCommentsForTopic(gtx *gin.Context) {
 	}
 	defer rows.Close()
 
-	var comments []model.Comment
+	var comments []dto.Comment
 	for rows.Next() {
-		var c model.Comment
+		var c dto.Comment
 		if err := rows.Scan(&c.CommentID, &c.Comment, &c.TopicID, &c.UserID, &c.CommentsTime); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan comment: %v", err)
 			return
