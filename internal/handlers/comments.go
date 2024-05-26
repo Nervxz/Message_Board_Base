@@ -11,9 +11,13 @@ import (
 
 func setupComments(g *gin.RouterGroup, deps *dependencies) {
 	h := &CommentHandler{deps: deps}
-	g.GET("/:topicID", h.getCommentsByTopicID) // Fetch comments for a specific topic
-	g.Use(AuthMiddleware(deps.redis))          // Protect the comment creation endpoint
+	g.Use(AuthMiddleware(deps.redis)) // Protect the comment creation endpoint
+	h.bind(g)
+}
+
+func (h *CommentHandler) bind(g *gin.RouterGroup) {
 	g.POST("/", h.createComment)
+	g.GET("/:topicID", h.getCommentsByTopicID) // Fetch comments for a specific topic
 }
 
 type CommentHandler struct {

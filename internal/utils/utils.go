@@ -3,6 +3,7 @@ package utils
 import (
 	"crypto/rand"
 	"encoding/hex"
+	"fmt"
 	"os"
 )
 
@@ -17,6 +18,8 @@ func LoadEnvOrDefault(envName string, defaultVal string) string {
 
 func GenerateToken() string {
 	bytes := make([]byte, 16)
-	rand.Read(bytes)
+	if _, err := rand.Read(bytes); err != nil {
+		panic(fmt.Errorf("can't generate random token: %w", err))
+	}
 	return hex.EncodeToString(bytes)
 }

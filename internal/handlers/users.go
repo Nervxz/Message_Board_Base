@@ -18,8 +18,9 @@ type UserHandler struct {
 
 func (h *UserHandler) bind(g *gin.RouterGroup) {
 	g.GET("/", h.getAllUsers)
-	g.GET("/:id", h.getUserByID)
 	g.POST("/", h.createUser)
+
+	g.GET("/:id", h.getUserByID)
 	g.PUT("/:id", h.updateUser)
 	g.DELETE("/:id", h.deleteUser)
 }

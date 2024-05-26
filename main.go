@@ -15,7 +15,6 @@ import (
 	"github.com/gin-gonic/gin"
 	_ "github.com/jackc/pgx/stdlib"
 	"github.com/nervxz/msg-board/internal/config"
-	internal "github.com/nervxz/msg-board/internal/database"
 	"github.com/nervxz/msg-board/internal/handlers"
 	"github.com/nervxz/msg-board/internal/utils"
 	"github.com/redis/go-redis/v9"
@@ -105,11 +104,6 @@ func newServer() (*server, error) {
 	db, err := connectDB(cfg.DB)
 	if err != nil {
 		log.Fatalf("Failed to connect to the database: %v", err)
-	}
-
-	err = internal.MigrateDB(db)
-	if err != nil {
-		log.Fatalf("Failed to migrate the database: %v", err)
 	}
 
 	redisClient, err := connectRedis(cfg.Redis)

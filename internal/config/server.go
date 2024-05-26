@@ -1,6 +1,8 @@
 package config
 
 import (
+	"log"
+
 	moho "github.com/joho/godotenv"
 	"github.com/nervxz/msg-board/internal/utils"
 )
@@ -35,7 +37,7 @@ type RedisConfig struct {
 func Resolve() (*ServerConfig, error) {
 	err := moho.Load()
 	if err != nil {
-		return nil, err
+		log.Printf("WARNING: no .env file or the file could not be read (%v)", err)
 	}
 
 	return &ServerConfig{
