@@ -37,6 +37,7 @@ func main() {
 }
 
 func toJson(u dto.User) string {
+	// https://viblo.asia/p/huong-dan-json-trong-golang-yMnKMzXjZ7P
 	s, _ := json.Marshal(u)
 	return string(s)
 }
@@ -99,13 +100,18 @@ func prepareUsers() []dto.User {
 }
 
 func genTopics(db *sql.DB, users []dto.User) ([]dto.Topic, error) {
+	// define the number of topics each user will create
 	const minTopic = 2
 	const maxTopic = 5
+	// pre allocate the slide to hold the topic base on min topic of users
 	topics := make([]dto.Topic, 0, len(users)*minTopic)
 	now := time.Now()
+	//  for each user, generate a random number of topics between min topic and max topic
 	for _, u := range users {
 		n := randInt(minTopic, maxTopic)
+		// for each topic, create a topic with random title and body
 		for i := range n {
+			// append the topic to the topics slice
 			topics = append(topics, dto.Topic{
 				By:    u.ID,
 				Title: fmt.Sprintf("topic %d by user %d at %d", i+1, u.ID, now.Unix()),
@@ -115,6 +121,7 @@ func genTopics(db *sql.DB, users []dto.User) ([]dto.Topic, error) {
 	}
 
 	d := dao.NewTopicDAO(db)
+	// create the topics in the database
 	created, err := d.Create(topics...)
 	if err != nil {
 		return nil, err
@@ -123,12 +130,60 @@ func genTopics(db *sql.DB, users []dto.User) ([]dto.Topic, error) {
 }
 
 func genVotes(db *sql.DB, users []dto.User, topics []dto.Topic) {
+	const minVotes = 1
+	const maxVotes = 5
+
+	votes := make([]dto.Vote, 0, len(topics)*maxVotes)
+	now := time.Now()
+
+	for _, topic := range topics {
+		n := randInt(minVotes, maxVotes)
+		for i := 0; i < n; i++ {
+			user := users[rand.Intn(len(users))]
+			vote := dto.Vote{
+				By:        user.ID,
+				TopicID:   topic.ID,
+				CreatedAt: now,
+			}
+			votes = append(votes, vote)
+		}
+	}
+
+	d := dao.NewVoteDAO(db)
+	_, err := d.Create(votes...)
+	if err != nil {
+		log.Printf("fail to create votes, err=%v", err)
+	}
 
 }
 
 func genComments(db *sql.DB, users []dto.User, topics []dto.Topic) {
-}
+	const minComments = 1
+	const maxComments = 5
 
+	comments := make([]dto.Comment, 0, len(topics)*maxComments)
+	now := time.Now()
+
+	for _, topic := range topics {
+		n := randInt(minComments, maxComments)
+		for i := 0; i < n; i++ {
+			user := users[rand.Intn(len(users))]
+			comment := dto.Comment{
+				By:        user.ID,
+				ID:        topic.ID,
+				Content:   fmt.Sprintf("Comment %d by user %d on topic %d", i+1, user.ID, topic.ID),
+				CreatedAt: now,
+			}
+			comments = append(comments, comment)
+		}
+	}
+
+	d := dao.NewCommentDAO(db)
+	_, err := d.Create(comments...)
+	if err != nil {
+		log.Printf("fail to create comments, err=%v", err)
+	}
+}
 func connect() *sql.DB {
 	url := utils.LoadEnvOrDefault(config.EnvDBURL, config.DefaultDBURL)
 	db, err := config.ConnectDB(config.DBConfig{

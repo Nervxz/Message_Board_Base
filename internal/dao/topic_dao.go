@@ -18,6 +18,7 @@ type TopicDAO struct {
 }
 
 func (d TopicDAO) Create(objs ...dto.Topic) ([]dto.Topic, error) {
+
 	if len(objs) == 0 {
 		return nil, nil
 	}
