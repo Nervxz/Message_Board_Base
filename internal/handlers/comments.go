@@ -61,7 +61,7 @@ func (h *CommentHandler) createComment(gtx *gin.Context) {
 	}
 
 	// Insert the comment into the database
-	_, err = h.deps.db.Exec("INSERT INTO Comments (Comment, TopicID, UserID) VALUES ($1, $2, $3)", c.Comment, c.TopicID, userIDInt)
+	_, err = h.deps.db.Exec("INSERT INTO Comments (Comment, TopicID, UserID) VALUES ($1, $2, $3)", c.Content, c.TopicID, userIDInt)
 	if err != nil {
 		gtx.String(http.StatusInternalServerError, "Failed to create comment: %v", err)
 		return
@@ -83,7 +83,7 @@ func (h *CommentHandler) getCommentsByTopicID(gtx *gin.Context) {
 	var comments []dto.Comment
 	for rows.Next() {
 		var c dto.Comment
-		if err := rows.Scan(&c.CommentID, &c.Comment, &c.TopicID, &c.UserID, &c.CommentsTime); err != nil {
+		if err := rows.Scan(&c.ID, &c.Content, &c.TopicID, &c.By, &c.CreatedAt); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan comment: %v", err)
 			return
 		}

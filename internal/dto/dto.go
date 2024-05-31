@@ -20,9 +20,11 @@ type Topic struct {
 	ID        int       `json:"id,omitempty"`
 	CreatedAt time.Time `json:"created_at"`
 
-	By    int    `json:"by,omitempty"`
-	Title string `json:"title,omitempty"`
-	Body  string `json:"body,omitempty"`
+	By           int    `json:"by,omitempty"`
+	Title        string `json:"title,omitempty"`
+	Body         string `json:"body,omitempty"`
+	CommentCount int    `json:"comment_count,omitempty"`
+	Upvotes      int    `json:"upvotes,omitempty"`
 }
 
 type Comment struct {
@@ -31,4 +33,5 @@ type Comment struct {
 
 	By      int    `json:"by,omitempty"`
 	Content string `json:"content,omitempty"`
+	TopicID int    `json:"topic_id,omitempty"`
 }

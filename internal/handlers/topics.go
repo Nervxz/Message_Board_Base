@@ -55,7 +55,7 @@ func (h *TopicHandler) getAllTopics(gtx *gin.Context) {
 	var topics []dto.Topic
 	for rows.Next() {
 		var c dto.Topic
-		if err := rows.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID, &c.Upvotes, &c.CommentCount); err != nil {
+		if err := rows.Scan(&c.ID, &c.Title, &c.Body, &c.CreatedAt, &c.By, &c.Upvotes, &c.CommentCount); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan topic: %v", err)
 			return
 		}
@@ -71,7 +71,7 @@ func (h *TopicHandler) getTopicByID(gtx *gin.Context) {
 	id := gtx.Param("id")
 	row := h.deps.db.QueryRow("SELECT TopicID, Title, Body, DatePublished, UserID FROM Topics WHERE TopicID = $1", id)
 	var c dto.Topic
-	if err := row.Scan(&c.TopicID, &c.Title, &c.Body, &c.DatePublished, &c.UserID); err != nil {
+	if err := row.Scan(&c.ID, &c.Title, &c.Body, &c.CreatedAt, &c.By); err != nil {
 		if err == sql.ErrNoRows {
 			gtx.String(http.StatusNotFound, "Topic not found")
 			return
@@ -95,7 +95,7 @@ func (h *TopicHandler) getCommentsForTopic(gtx *gin.Context) {
 	var comments []dto.Comment
 	for rows.Next() {
 		var c dto.Comment
-		if err := rows.Scan(&c.CommentID, &c.Comment, &c.TopicID, &c.UserID, &c.CommentsTime); err != nil {
+		if err := rows.Scan(&c.ID, &c.Content, &c.TopicID, &c.By, &c.CreatedAt); err != nil {
 			gtx.String(http.StatusInternalServerError, "Failed to scan comment: %v", err)
 			return
 		}
